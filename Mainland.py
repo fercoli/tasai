@@ -12,6 +12,9 @@ for i in range(len(data)):
         data.iat[i,5] = data.iloc[i,5]/UF
 i = None
 
+dataprima = data
+data = data[((data["valor"] - data["valor"].mean()) / data["valor"].std()).abs() < 3]
+
 y = data.iloc[:,5]
 newcols = list(data.columns)
 newcols.pop(4)
@@ -45,17 +48,21 @@ Thescaly = StandardScaler()
 fff = MinMaxScaler(feature_range=(0,1))
 otrososo = Thescaly.fit_transform(soso)
 xy = fff.fit_transform(xy)
-    
+
 
 from sklearn.model_selection import train_test_split
 
 X_train, X_test, y_train, y_test = train_test_split(otrososo, xy, test_size = 0.2, random_state = 0)
 
 
-Brainy = Builder(3, [10,20,1], ["relu","relu","sigmoid"],17)
+Brainy = Builder(2, [17,1], ["relu","sigmoid"],17, ls = "mean_squared_error")
 
-Brainy.fit(X_train, y_train, batch_size = 5, epochs = 1000)
+Brainy.fit(X_train, y_train, batch_size = 400, epochs = 1000)
 
+
+X_hw = np.array([[0,0,0,0,1,0,3.53558e+06,61,70,1,1,1,-33.3938,-70.562,8,10,2017]])
+X_hw = Thescaly.transform(X_hw)
+Y_hw = Brainy.predict(X_hw)
 
 ##we use piton
 #a = open("database.csv")
